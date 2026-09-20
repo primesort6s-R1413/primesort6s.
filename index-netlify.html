@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrimeSort 6S — Workplace Organization Systems</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F1EA;
+    --ink:#1B1F23;
+    --steel:#4B5561;
+    --yellow:#F5B700;
+    --green:#2F6F4E;
+    --line:#D8D3C6;
+    --panel:#EAE6DA;
+    --white:#FFFFFF;
+  }
+  :root:not([data-theme="light"]){
+    /* keep the studio palette even if a dark shell preference is set —
+       this brand is print/signage based, not a UI dark-mode candidate */
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Karla',sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{
+    font-family:'Oswald',sans-serif;
+    font-weight:600;
+    margin:0;
+    line-height:1.08;
+    letter-spacing:0.2px;
+  }
+  a{color:inherit;}
+  img,svg{max-width:100%;display:block;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 32px;}
+  .overflow-scroll{overflow-x:auto;}
+
+  /* ---------- Nav ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(243,241,234,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  nav.wrap{
+    display:flex; align-items:center; justify-content:space-between;
+    height:76px;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Oswald',sans-serif; font-weight:600; font-size:20px;}
+  .brand .mark{
+    width:28px;height:28px;background:var(--ink);
+    display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;padding:3px;
+  }
+  .brand .mark span{background:var(--yellow);}
+  .brand .mark span:nth-child(3){background:var(--green);}
+  .navlinks{display:flex; gap:36px; font-size:15px; font-weight:500;}
+  .navlinks a{text-decoration:none; border-bottom:2px solid transparent; padding-bottom:4px; transition:border-color .15s ease;}
+  .navlinks a:hover{border-color:var(--yellow);}
+  .navcta{
+    background:var(--ink); color:var(--bg); padding:10px 20px;
+    font-weight:600; font-size:14px; text-decoration:none; border:1px solid var(--ink);
+  }
+  .navcta:hover{background:transparent; color:var(--ink);}
+  .mobile-toggle{display:none;}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:76px 0 96px; position:relative;}
+  .hero-grid{display:grid; grid-template-columns:1.05fr 0.85fr; gap:64px; align-items:center;}
+  .kicker{
+    font-size:13px; font-weight:600; color:var(--steel); letter-spacing:.4px;
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .kicker .dash{width:28px;height:2px;background:var(--yellow);}
+  .hero h1{font-size:56px; letter-spacing:0.2px;}
+  .hero h1 em{font-style:normal; color:var(--green);}
+  .hero p.lead{
+    margin-top:22px; max-width:44ch; font-size:18px; color:#2c343c;
+  }
+  .hero-ctas{display:flex; gap:16px; margin-top:34px; flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--ink); color:var(--bg); padding:14px 26px; font-weight:600;
+    text-decoration:none; font-size:15px; border:1px solid var(--ink); display:inline-block;
+  }
+  .btn-primary:hover{background:var(--green); border-color:var(--green);}
+  .btn-secondary{
+    padding:14px 26px; font-weight:600; text-decoration:none; font-size:15px;
+    border:1px solid var(--ink); display:inline-block;
+  }
+  .btn-secondary:hover{background:var(--white);}
+
+  .stat-row{display:flex; gap:40px; margin-top:52px; flex-wrap:wrap;}
+  .stat-row .stat .num{font-family:'Oswald',sans-serif; font-size:32px; font-weight:600;}
+  .stat-row .stat .lab{font-size:13px; color:var(--steel); margin-top:2px;}
+
+  /* floor-plan hero graphic */
+  .floorplan{
+    background:var(--white); border:1px solid var(--line); padding:22px;
+  }
+  .floorplan .fp-head{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:14px;}
+  .floorplan .fp-head span{font-size:12px; color:var(--steel); font-weight:600;}
+
+  /* ---------- Section shell ---------- */
+  section{padding:92px 0;}
+  .section-head{max-width:56ch; margin-bottom:52px;}
+  .section-head .kicker{margin-bottom:14px;}
+  .section-head h2{font-size:36px;}
+  .section-head p{margin-top:16px; color:var(--steel); font-size:16px;}
+
+  /* ---------- Intro / before-after ---------- */
+  .intro{background:var(--panel); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .intro-grid{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  .intro-copy p{color:#2c343c; font-size:16.5px; max-width:48ch;}
+  .intro-copy p + p{margin-top:16px;}
+  .ba{display:grid; grid-template-columns:1fr 1fr; gap:2px; background:var(--line);}
+  .ba-panel{background:var(--white); padding:18px;}
+  .ba-panel .ba-label{font-size:12px; font-weight:700; letter-spacing:.3px; margin-bottom:12px;}
+  .ba-panel.before .ba-label{color:#8a2b2b;}
+  .ba-panel.after .ba-label{color:var(--green);}
+
+  /* ---------- Pillars (sequence — numbering earned) ---------- */
+  .pillars{counter-reset:pillar;}
+  .pillar-track{display:grid; grid-template-columns:repeat(6,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .pillar{
+    background:var(--bg); padding:26px 20px 24px; position:relative; min-height:230px;
+    display:flex; flex-direction:column;
+  }
+  .pillar .p-num{
+    font-family:'Oswald',sans-serif; font-size:15px; font-weight:700; color:var(--white);
+    background:var(--ink); width:30px; height:30px; display:flex; align-items:center; justify-content:center;
+    margin-bottom:18px;
+  }
+  .pillar:nth-child(6) .p-num{background:var(--yellow); color:var(--ink);}
+  .pillar h3{font-size:19px; margin-bottom:10px;}
+  .pillar p{font-size:14.5px; color:var(--steel); flex:1;}
+
+  /* ---------- Services ---------- */
+  .services-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line);}
+  .service{background:var(--white); padding:34px;}
+  .service h3{font-size:21px; margin-bottom:10px;}
+  .service p{color:var(--steel); font-size:15px; max-width:42ch;}
+  .service .tag{
+    display:inline-block; font-size:12px; font-weight:700; color:var(--green);
+    margin-bottom:14px; letter-spacing:.2px;
+  }
+
+  /* ---------- Testimonial ---------- */
+  .testimonial{background:var(--ink); color:var(--bg);}
+  .testimonial .wrap{display:grid; grid-template-columns:2px 1fr; gap:32px;}
+  .testimonial .bar{background:var(--yellow);}
+  .testimonial blockquote{
+    margin:0; font-family:'Oswald',sans-serif; font-weight:500; font-size:28px; line-height:1.35;
+    max-width:26ch;
+  }
+  .testimonial .attrib{margin-top:24px; font-family:'Karla',sans-serif; font-size:14px; color:#B7BDC2;}
+
+  /* ---------- Contact ---------- */
+  .contact-grid{display:grid; grid-template-columns:0.9fr 1.1fr; gap:64px;}
+  .contact-info .item{margin-bottom:26px;}
+  .contact-info .item .lab{font-size:12px; font-weight:700; color:var(--steel); letter-spacing:.3px; margin-bottom:6px;}
+  .contact-info .item .val{font-size:16px;}
+  form{display:flex; flex-direction:column; gap:18px;}
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field label{font-size:13px; font-weight:600; color:var(--steel);}
+  .field input, .field textarea{
+    border:1px solid var(--line); background:var(--white); padding:13px 14px; font-family:'Karla',sans-serif;
+    font-size:15px; color:var(--ink); resize:vertical;
+  }
+  .field input[type="file"]{padding:9px 10px; font-size:14px;}
+  .field input:focus, .field textarea:focus{outline:2px solid var(--green); outline-offset:1px;}
+  .form-row{display:grid; grid-template-columns:1fr 1fr; gap:18px;}
+  .submit-btn{
+    background:var(--ink); color:var(--bg); padding:15px 26px; font-weight:600; font-size:15px;
+    border:1px solid var(--ink); cursor:pointer; align-self:flex-start; font-family:'Karla',sans-serif;
+  }
+  .submit-btn:hover{background:var(--green); border-color:var(--green);}
+  .submit-btn:disabled{opacity:.6; cursor:not-allowed;}
+  .form-msg{font-size:14px; margin-top:4px; min-height:18px;}
+  .form-msg.ok{color:var(--green); font-weight:600;}
+  .form-msg.err{color:#a3352f; font-weight:600;}
+
+  /* ---------- Inbox (team-only) ---------- */
+  .inbox-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line);}
+  .inbox-item{background:var(--white); padding:20px 24px;}
+  .inbox-item-head{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap;}
+  .inbox-item-head strong{font-family:'Oswald',sans-serif; font-size:17px; font-weight:600;}
+  .inbox-item-head span{font-size:12px; color:var(--steel);}
+  .inbox-item-meta{font-size:13px; color:var(--steel); margin-top:4px;}
+  .inbox-item-msg{font-size:14.5px; margin-top:10px; white-space:pre-wrap; max-width:70ch;}
+  .inbox-item-attach{margin-top:10px;}
+  .inbox-item-attach a{font-size:13px; font-weight:600; color:var(--green); text-decoration:underline;}
+  .inbox-empty{background:var(--white); padding:28px 24px; color:var(--steel); font-size:14px;}
+
+  /* ---------- Footer ---------- */
+  footer{border-top:1px solid var(--line); padding:36px 0;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--steel);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:860px){
+    .navlinks{display:none;}
+    .hero-grid, .intro-grid, .contact-grid{grid-template-columns:1fr;}
+    .hero h1{font-size:38px;}
+    .pillar-track{grid-template-columns:repeat(2,1fr);}
+    .services-grid{grid-template-columns:1fr;}
+    .form-row{grid-template-columns:1fr;}
+    .stat-row{gap:28px;}
+    section{padding:64px 0;}
+    .testimonial blockquote{font-size:22px;}
+  }
+  @media (max-width:520px){
+    .wrap{padding:0 20px;}
+    .pillar-track{grid-template-columns:1fr;}
+  }
+
+  :focus-visible{outline:2px solid var(--green); outline-offset:2px;}
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="brand"><div class="mark"><span></span><span></span><span></span><span></span></div>PrimeSort 6S</div>
+    <div class="navlinks">
+      <a href="#pillars">Pillars</a>
+      <a href="#services">Services</a>
+      <a href="#results">Results</a>
+      <a href="#case-study">Case Study</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a class="navcta" href="#contact">Book a walkthrough</a>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker"><span class="dash"></span>WORKPLACE ORGANIZATION CONSULTANTS</div>
+      <h1>A place for everything.<br>Everything in <em>its place.</em></h1>
+      <p class="lead">We install the 6S system — Sort, Set in Order, Shine, Standardize, Sustain, Safety — on your shop floor, so every tool, part, and process has one obvious home.</p>
+      <div class="hero-ctas">
+        <a class="btn-primary" href="#contact">Book a walkthrough</a>
+        <a class="btn-secondary" href="#pillars">See the 6 pillars</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="num">32%</div><div class="lab">avg. drop in search &amp; wait time</div></div>
+        <div class="stat"><div class="num">90</div><div class="lab">day rollout, floor to standard</div></div>
+        <div class="stat"><div class="num">6</div><div class="lab">pillars, one audit cycle</div></div>
+      </div>
+    </div>
+    <div class="floorplan">
+      <div class="fp-head"><span>BAY 4 — BEFORE AUDIT</span><span>ZONE MAP</span></div>
+      <svg viewBox="0 0 340 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram of a warehouse floor divided into six labeled zones">
+        <rect x="0" y="0" width="340" height="280" fill="#F3F1EA" stroke="#D8D3C6"/>
+        <!-- zone grid -->
+        <g stroke="#D8D3C6">
+          <line x1="113" y1="0" x2="113" y2="280"/>
+          <line x1="226" y1="0" x2="226" y2="280"/>
+          <line x1="0" y1="140" x2="340" y2="140"/>
+        </g>
+        <!-- zone fills -->
+        <rect x="0" y="0" width="113" height="140" fill="#F5B70022"/>
+        <rect x="113" y="0" width="113" height="140" fill="#2F6F4E1A"/>
+        <rect x="226" y="0" width="114" height="140" fill="#4B55611A"/>
+        <rect x="0" y="140" width="113" height="140" fill="#4B55611A"/>
+        <rect x="113" y="140" width="113" height="140" fill="#F5B70022"/>
+        <rect x="226" y="140" width="114" height="140" fill="#2F6F4E1A"/>
+        <!-- labels -->
+        <text x="14" y="24" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S1 SORT</text>
+        <text x="127" y="24" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S2 SET IN ORDER</text>
+        <text x="240" y="24" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S3 SHINE</text>
+        <text x="14" y="164" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S4 STANDARDIZE</text>
+        <text x="127" y="164" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S5 SUSTAIN</text>
+        <text x="240" y="164" font-family="Oswald, sans-serif" font-size="13" font-weight="600" fill="#1B1F23">S6 SAFETY</text>
+        <!-- tool silhouettes scattered (before state) -->
+        <g fill="#1B1F23" opacity="0.55">
+          <rect x="30" y="60" width="26" height="6" rx="1"/>
+          <circle cx="70" cy="90" r="7"/>
+          <rect x="150" y="70" width="18" height="18"/>
+          <rect x="250" y="55" width="30" height="8" rx="1"/>
+          <circle cx="60" cy="200" r="6"/>
+          <rect x="170" y="190" width="22" height="7" rx="1"/>
+          <rect x="270" y="210" width="16" height="16"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<section class="intro">
+  <div class="wrap intro-grid">
+    <div class="intro-copy">
+      <div class="kicker"><span class="dash"></span>WHAT 6S CHANGES</div>
+      <h2 style="font-size:32px; margin-bottom:18px;">The floor tells you when something's wrong — if it's organized enough to show you.</h2>
+      <p>6S isn't a cleanup event. It's a standard: a fixed spot for every item, a visible line between normal and abnormal, and a rhythm that keeps it that way after we leave.</p>
+      <p>We run the audit, tape the floor, label the shadow boards, and train your team to hold the line — then we hand you the checklist that keeps it self-sustaining.</p>
+    </div>
+    <div class="ba">
+      <div class="ba-panel before">
+        <div class="ba-label">BEFORE</div>
+        <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="240" height="170" fill="#FFFFFF"/>
+          <rect x="10" y="10" width="220" height="150" fill="none" stroke="#D8D3C6"/>
+          <g fill="#8a2b2b" opacity="0.7">
+            <rect x="30" y="30" width="20" height="5"/>
+            <circle cx="80" cy="50" r="6"/>
+            <rect x="120" y="25" width="15" height="15"/>
+            <rect x="170" y="40" width="24" height="6"/>
+            <circle cx="40" cy="90" r="5"/>
+            <rect x="90" y="100" width="18" height="18" transform="rotate(12 99 109)"/>
+            <rect x="150" y="95" width="22" height="7"/>
+            <circle cx="200" cy="110" r="7"/>
+            <rect x="60" y="130" width="16" height="16"/>
+            <rect x="180" y="130" width="20" height="6"/>
+          </g>
+        </svg>
+      </div>
+      <div class="ba-panel after">
+        <div class="ba-label">AFTER — S2 SET IN ORDER</div>
+        <svg viewBox="0 0 240 170" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="240" height="170" fill="#FFFFFF"/>
+          <rect x="10" y="10" width="220" height="150" fill="none" stroke="#D8D3C6"/>
+          <g stroke="#2F6F4E" fill="none" stroke-width="1.4">
+            <rect x="26" y="26" width="40" height="30"/>
+            <rect x="80" y="26" width="40" height="30"/>
+            <rect x="134" y="26" width="40" height="30"/>
+            <rect x="26" y="70" width="40" height="30"/>
+            <rect x="80" y="70" width="40" height="30"/>
+            <rect x="134" y="70" width="40" height="30"/>
+            <rect x="26" y="114" width="40" height="30"/>
+            <rect x="80" y="114" width="40" height="30"/>
+            <rect x="134" y="114" width="40" height="30"/>
+          </g>
+          <g fill="#2F6F4E">
+            <rect x="38" y="38" width="16" height="6"/>
+            <circle cx="100" cy="41" r="5"/>
+            <rect x="148" y="36" width="12" height="12"/>
+            <rect x="40" y="82" width="14" height="14"/>
+            <circle cx="100" cy="85" r="5"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pillars" class="pillars">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker"><span class="dash"></span>THE SYSTEM</div>
+      <h2>Six pillars, run in order.</h2>
+      <p>Each stage builds the discipline the next one depends on — skip one and the standard doesn't hold.</p>
+    </div>
+  </div>
+  <div class="wrap overflow-scroll">
+    <div class="pillar-track" style="min-width:760px;">
+      <div class="pillar">
+        <div class="p-num">1</div>
+        <h3>Sort</h3>
+        <p>Separate what's needed from what isn't. Red-tag anything unused for 30 days and clear it from the floor.</p>
+      </div>
+      <div class="pillar">
+        <div class="p-num">2</div>
+        <h3>Set in Order</h3>
+        <p>Give every remaining item a marked, obvious home — shadow boards, floor tape, labeled bins.</p>
+      </div>
+      <div class="pillar">
+        <div class="p-num">3</div>
+        <h3>Shine</h3>
+        <p>Clean as inspection. A wipe-down surfaces leaks, wear, and damage before they become downtime.</p>
+      </div>
+      <div class="pillar">
+        <div class="p-num">4</div>
+        <h3>Standardize</h3>
+        <p>Turn the first three into a written, visual standard anyone on the team can check against.</p>
+      </div>
+      <div class="pillar">
+        <div class="p-num">5</div>
+        <h3>Sustain</h3>
+        <p>Build the audit rhythm and ownership that keeps the standard alive after the consultants leave.</p>
+      </div>
+      <div class="pillar">
+        <div class="p-num">6</div>
+        <h3>Safety</h3>
+        <p>Close the loop: hazard lines, PPE zones, and clear sightlines built into the layout, not bolted on.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker"><span class="dash"></span>HOW WE WORK WITH YOU</div>
+      <h2>Four ways in, one standard out.</h2>
+      <p>Start wherever your floor needs it most — most teams run all four over a single 90-day cycle.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service">
+        <div class="tag">01 — AUDIT</div>
+        <h3>Floor assessment</h3>
+        <p>A walk-the-line audit scoring every bay against the 6S checklist, with photos, red-tag counts, and a priority map of where to start.</p>
+      </div>
+      <div class="service">
+        <div class="tag">02 — IMPLEMENTATION</div>
+        <h3>Physical rollout</h3>
+        <p>Shadow boards, floor tape, labeling, and layout changes installed on-site with your team, not around them.</p>
+      </div>
+      <div class="service">
+        <div class="tag">03 — TRAINING</div>
+        <h3>Team certification</h3>
+        <p>Shift-by-shift training so every operator can run and defend an audit, not just follow one.</p>
+      </div>
+      <div class="service">
+        <div class="tag">04 — SUSTAINMENT</div>
+        <h3>Ongoing audits</h3>
+        <p>Monthly scoring and a scorecard dashboard so drift gets caught in weeks, not at the next big cleanup.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonial" id="results">
+  <div class="wrap">
+    <div class="bar"></div>
+    <div>
+      <blockquote>"We stopped losing twenty minutes a shift just looking for the right torque wrench."</blockquote>
+      <div class="attrib">Plant Operations Manager, mid-size automotive supplier</div>
+    </div>
+  </div>
+</section>
+
+<section id="case-study">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="kicker"><span class="dash"></span>PROVEN ON THE FLOOR</div>
+      <h2>What a completed 6S rollout looks like.</h2>
+      <p>From a recent industrial site engagement — a process manufacturing facility in Bangalore. Client details withheld; the practices are what matter.</p>
+    </div>
+    <div class="services-grid" style="margin-bottom:1px;">
+      <div class="service">
+        <div class="tag">TABLE &amp; WORKSTATION MARKING</div>
+        <h3>Every item, a taped outline</h3>
+        <p>Monitors, keyboards, and shared tools got fixed, labeled positions on desks and control panels — so a missing item is visible in seconds, not discovered at the next shift.</p>
+      </div>
+      <div class="service">
+        <div class="tag">FLOOR &amp; FLOW MARKING</div>
+        <h3>Lines that tell you where to walk and where things flow</h3>
+        <p>Pedestrian paths, equipment footprints, and pipe flow-direction arrows were painted directly onto the floor and machinery, cutting near-miss incidents around moving vehicles and hot surfaces.</p>
+      </div>
+      <div class="service">
+        <div class="tag">TOOLS &amp; SPARES ARRANGEMENT</div>
+        <h3>Shadow boards down to the wrench size</h3>
+        <p>Tool boards and spares cupboards were re-organized with labeled, shadow-outlined slots for every item — inside and outside each cupboard — so anyone can spot what's missing at a glance.</p>
+      </div>
+      <div class="service">
+        <div class="tag">EQUIPMENT &amp; PANEL NAMING</div>
+        <h3>Every panel, switch, and feeder labeled</h3>
+        <p>MCC panels, switches, sockets, and machine names were tagged consistently across the site, removing the guesswork during changeovers, faults, and lockout-tagout procedures.</p>
+      </div>
+    </div>
+    <div class="floorplan" style="margin-top:1px;">
+      <div class="fp-head">
+        <span>THIRD-PARTY AUDITED</span>
+        <span>6S &amp; VISUAL MANAGEMENT SYSTEM</span>
+      </div>
+      <p style="margin:0; font-size:15px; color:var(--steel); max-width:70ch;">This engagement's 6S and Visual Management System implementation was independently audited and certified against <strong style="color:var(--ink);">ISO 9001:2015</strong> and <strong style="color:var(--ink);">ISO 45001:2018</strong> quality and safety-management standards — verifying the rollout met all 6S requirements on site.</p>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap contact-grid">
+    <div class="contact-info">
+      <div class="kicker"><span class="dash"></span>GET STARTED</div>
+      <h2 style="font-size:32px; margin-bottom:20px;">Book a floor walkthrough.</h2>
+      <p style="color:var(--steel); margin-bottom:32px; max-width:38ch;">Send us a bit about your facility and we'll schedule a no-cost audit walkthrough within two weeks.</p>
+      <div class="item">
+        <div class="lab">EMAIL</div>
+        <div class="val">primesort6s@gmail.com</div>
+      </div>
+      <div class="item">
+        <div class="lab">PHONE</div>
+        <div class="val">+91 89043 02873</div>
+      </div>
+      <div class="item">
+        <div class="lab">SERVICE AREA</div>
+        <div class="val">On-site consulting, Bangalore</div>
+      </div>
+    </div>
+    <form id="contact-form">
+      <div class="form-row">
+        <div class="field">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="field">
+          <label for="company">Company</label>
+          <input type="text" id="company" name="company">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </div>
+        <div class="field">
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone">
+        </div>
+      </div>
+      <div class="field">
+        <label for="message">Tell us about your floor</label>
+        <textarea id="message" name="message" rows="5" required placeholder="Facility size, current pain points, timeline..."></textarea>
+      </div>
+      <button type="submit" class="submit-btn" id="submit-btn">Send message</button>
+      <div class="form-msg" id="form-msg" role="status"></div>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>© 2026 PrimeSort 6S. All rights reserved.</div>
+    <div>Sort · Set in Order · Shine · Standardize · Sustain · Safety</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>
+(function(){
+  // ===== EmailJS setup — replace these three values after creating your free account =====
+  // 1. Sign up at emailjs.com and connect your Gmail (primesort6s@gmail.com) as an email service.
+  // 2. Create an email template — the {{name}}, {{email}}, {{phone}}, {{company}}, {{message}}
+  //    variables below must match the variable names used in that template.
+  // 3. Paste your Public Key, Service ID, and Template ID here:
+  const EMAILJS_PUBLIC_KEY  = "YOUR_PUBLIC_KEY";
+  const EMAILJS_SERVICE_ID  = "YOUR_SERVICE_ID";
+  const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
+  // ==========================================================================================
+
+  emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+  const form = document.getElementById('contact-form');
+  const btn = document.getElementById('submit-btn');
+  const msg = document.getElementById('form-msg');
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    btn.disabled = true;
+    msg.textContent = 'Sending...';
+    msg.className = 'form-msg';
+
+    const params = {
+      name: document.getElementById('name').value.trim(),
+      company: document.getElementById('company').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      message: document.getElementById('message').value.trim()
+    };
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params).then(function(){
+      msg.textContent = 'Thanks — we\'ll follow up within two business days.';
+      msg.className = 'form-msg ok';
+      form.reset();
+    }).catch(function(err){
+      console.error('EmailJS error:', err);
+      msg.textContent = 'Something went wrong sending that. Please email primesort6s@gmail.com directly.';
+      msg.className = 'form-msg err';
+    }).finally(function(){
+      btn.disabled = false;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
